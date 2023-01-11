@@ -23,23 +23,84 @@ app.post('/', (req, res) => {
     // using Twilio SendGrid's v3 Node.js Library
     // https://github.com/sendgrid/sendgrid-nodejs
     //javascript
-    const sgMail = require('@sendgrid/mail')
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-    const msg = {
-    to: 'umolecodes@gmail.com', // Change to your recipient
-    from: 'ozimedeumole@gmail.com', // Change to your verified sender
-    subject: 'Sending with SendGrid is Fun',
-    text: 'and easy to do anywhere, even with Node.js',
-    html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-    } 
-    sgMail
-    .send(msg)
-    .then(() => {
-        console.log('Email sent')
-    })
-    .catch((error) => {
-        console.error(error)
-    })
+    // const sgMail = require('@sendgrid/mail')
+    // sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+    // const msg = {
+    // to: 'umolecodes@gmail.com', // Change to your recipient
+    // from: 'ozimedeumole@gmail.com', // Change to your verified sender
+    // subject: 'Sending with SendGrid is Fun',
+    // text: 'and easy to do anywhere, even with Node.js',
+    // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+    // } 
+    // sgMail
+    // .send(msg)
+    // .then(() => {
+    //     console.log('Email sent')
+    // })
+    // .catch((error) => {
+    //     console.error(error)
+    // })
+
+    //const mailchimp = require("@mailchimp/mailchimp_marketing");
+
+    mailchimp.setConfig({
+    apiKey: process.env.API_KEY,
+    server: "us14"
+    });
+
+    const event = {
+    name: "JS Developers Meetup"
+    };
+
+    const footerContactInfo = {
+    company: "Mailchimp",
+    address1: "675 Ponce de Leon Ave NE",
+    address2: "Suite 5000",
+    city: "Atlanta",
+    state: "GA",
+    zip: "30308",
+    country: "US"
+    };
+
+    const campaignDefaults = {
+    from_name: "Gettin' Together",
+    from_email: "gettintogether@example.com",
+    subject: "JS Developers Meetup",
+    language: "EN_US"
+    };
+
+    async function run() {
+        try {
+            const response = await mailchimp.lists.createList({
+                name: event.name,
+                contact: footerContactInfo,
+                permission_reminder: "permission_reminder",
+                email_type_option: true,
+                campaign_defaults: campaignDefaults
+            });
+        
+            console.log(
+                `Successfully created an audience. The audience id is ${response.id}.`
+            );
+        } catch (error) {
+            console.error(error);
+        } finally {
+            switch (response.statusCode) {
+                case 200:
+                    res.sendFile(__dirname + "/success.html");
+                    break;
+                case 400 || 401 || 402 || 403 || 404:
+                    res.sendFile(__dirname + "/failure.html");
+                    break;
+        
+                default:
+                    break;
+            }
+        }
+    
+}
+
+run();
 
 });
 
