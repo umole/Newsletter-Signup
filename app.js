@@ -20,7 +20,7 @@ app.post('/', (req, res) => {
     const lastname = req.body.lastname;
     const useremail = req.body.email;
 
-    // using Twilio SendGrid's v3 Node.js Library
+    //
     // https://github.com/sendgrid/sendgrid-nodejs
     //javascript
     // const sgMail = require('@sendgrid/mail')
